@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct _Node
 {
@@ -10,7 +11,7 @@ typedef struct _Node
 	uint8_t data;
 } Node;
 
-uint8_t data[20];
+uint8_t data[30] = {0,1,3,6,7,4,2,5,8,9};
 Node *nodeMap[sizeof(data)];
 
 void createTree(_In_ uint8_t* data, _Inout_ Node *map[]);
@@ -20,13 +21,15 @@ void printTree(_In_ Node* root);
 uint8_t main(void) {
 	
 	//create random
+	srand(time);
 	for (int i = 0; i < sizeof(data); i++) {
-		data[i] = rand()%255;
+		data[i] = rand()%9;
 	}
 	createTree(data, sizeof(data), nodeMap);
 	printTree(nodeMap[0]);
 
 	//printf("\n%p", &nodeMap[0]);
+	printf("\nPause! Please press any button");
 	getchar();
 	return 0;
 }
@@ -78,11 +81,14 @@ Node* compare(_In_ Node* parents, uint8_t newData) {
 void printTree(_In_ Node* root) {
 	if (root->left != NULL) {
 		printTree(root->left);
-		printf("%d", ((Node*)root->left)->data);
-		printf("%d", ((Node*)root->right)->data);
+		printf("%d", root->data);
 	}
-	/*else if (root->right != NULL) {
+	if (root->right != NULL) {
+		if(root->left == NULL)
+			printf("%d", root->data);
 		printTree(root->right);
-		//printf("%d", root->data);
-	}*/
+	}
+	if(root->right == NULL && root->right == NULL) {
+		printf("%d", root->data);
+	}
 }
