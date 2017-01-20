@@ -13,9 +13,9 @@ typedef struct _Node
 } Node;
 
 uint8_t data[100] = {0,1,3,6,7,4,2,5,8,9};
-Node *nodeMap[sizeof(data)];
+Node* root = NULL;
 
-void createTree(_In_ uint8_t* data, size_t dataSize, _Inout_ Node *map[]);
+void createTree(_In_ uint8_t* data, size_t dataSize);
 Node* compare(_In_ Node* parents, uint8_t newData);
 void printTree(_In_ Node* root);
 
@@ -26,8 +26,8 @@ uint8_t main(void) {
 	for (int i = 0; i < sizeof(data); i++) {
 		data[i] = rand()% ((int)sizeof(data) +1);
 	}
-	createTree(data, sizeof(data), nodeMap);
-	printTree(nodeMap[0]);
+	createTree(data, sizeof(data));
+	printTree(root);
 
 	//printf("\n%p", &nodeMap[0]);
 	printf("\nPause! Please press any button");
@@ -35,23 +35,23 @@ uint8_t main(void) {
 	return 0;
 }
 
-void createTree(_In_ uint8_t* data, size_t dataSize, _Inout_ Node *map[]) {
+void createTree(_In_ uint8_t* data, size_t dataSize) {
 	//create root
 
-	map[0] = (Node*)malloc(sizeof(Node));
-	map[0]->parent = NULL;
-	map[0]->left = NULL;
-	map[0]->right = NULL;
-	map[0]->same = 0;
-	map[0]->data = data[0];
+	root = (Node*)malloc(sizeof(Node));
+	root->parent = NULL;
+	root->left = NULL;
+	root->right = NULL;
+	root->same = 0;
+	root->data = data[0];
 
 	for (int i = 1; i < dataSize; i++) {
-		map[i] = compare(map[0], data[i]);
+		compare(root, data[i]);
 	}
 }
 
 Node* compare(_In_ Node* parents, uint8_t newData) {
-	if (parents->data > newData) {
+	if (newData < parents->data) {
 		if (parents->left == NULL) {
 			parents->left = (Node*)malloc(sizeof(Node));
 			((Node*)parents->left)->parent = parents;
@@ -65,7 +65,7 @@ Node* compare(_In_ Node* parents, uint8_t newData) {
 			compare(parents->left, newData);
 		}
 	}
-	else if(parents->data < newData){
+	else if(newData > parents->data){
 		if (parents->right == NULL) {
 			parents->right = (Node*)malloc(sizeof(Node));
 			((Node*)parents->right)->parent = parents;
@@ -85,17 +85,17 @@ Node* compare(_In_ Node* parents, uint8_t newData) {
 	}
 }
 
-void printTree(_In_ Node* root) {
-	if (root->left != NULL) {
-		printTree(root->left);
-		printf("%d:%d ", root->data, root->same+1);
+void printTree(_In_ Node* parents) {
+	if (parents->left != NULL) {
+		printTree(parents->left);
+		printf("%d:%d ", parents->data, parents->same+1);
 	}
-	if (root->right != NULL) {
-		if(root->left == NULL)
-			printf("%d:%d ", root->data, root->same+1);
-		printTree(root->right);
+	if (parents->right != NULL) {
+		if(parents->left == NULL)
+			printf("%d:%d ", parents->data, parents->same+1);
+		printTree(parents->right);
 	}
-	if(root->left == NULL && root->right == NULL) {
-		printf("%d:%d ", root->data, root->same+1);
+	if(parents->left == NULL && parents->right == NULL) {
+		printf("%d:%d ", parents->data, parents->same+1);
 	}
 }
