@@ -16,7 +16,7 @@ typedef struct _Node
 
 void createTree(_Out_ Node* *parents, _In_ uint16_t* data, size_t dataSize);
 Node* addLeaf(_In_ Node* parents, uint16_t newData);
-Node* removeLead(_In_ Node* parents, uint16_t targetData);
+Node* removeLeaf(_In_ Node* parents, uint16_t targetData);
 void printTree(_In_ Node* root);
 
 uint8_t main(void) {
@@ -56,6 +56,20 @@ void createTree(_Out_ Node* *parents, _In_ uint16_t* data, size_t dataSize) {
 		addLeaf(((Node*)*parents), data[i]);
 	}
 }
+void printTree(_In_ Node* parents) {
+	if (parents->left != NULL) {
+		printTree(parents->left);
+		printf("%d:%d ", parents->data, parents->same + 1);
+	}
+	if (parents->right != NULL) {
+		if (parents->left == NULL)
+			printf("%d:%d ", parents->data, parents->same + 1);
+		printTree(parents->right);
+	}
+	if (parents->left == NULL && parents->right == NULL) {
+		printf("%d:%d ", parents->data, parents->same + 1);
+	}
+}
 
 Node* addLeaf(_In_ Node* parents, uint16_t newData) {
 	if (newData < parents->data) {
@@ -92,17 +106,30 @@ Node* addLeaf(_In_ Node* parents, uint16_t newData) {
 	}
 }
 
-void printTree(_In_ Node* parents) {
-	if (parents->left != NULL) {
-		printTree(parents->left);
-		printf("%d:%d ", parents->data, parents->same + 1);
+Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
+	if (targetData < parents->data) {
+		//turn left
+		removeLeaf((Node*)parents->left, targetData);
 	}
-	if (parents->right != NULL) {
-		if (parents->left == NULL)
-			printf("%d:%d ", parents->data, parents->same + 1);
-		printTree(parents->right);
+	else if (targetData > parents->data) {
+		//turn right
+		removeLeaf((Node*)parents->right, targetData);
 	}
-	if (parents->left == NULL && parents->right == NULL) {
-		printf("%d:%d ", parents->data, parents->same + 1);
+	else {
+		//remove
+		/*judgment is there any data under this leaf?
+		1. nodata, just delete
+		2. havedata
+			1. only left?
+				move the next left data to replace orign data
+			2. only right?
+				move the next right data to replace orign data:
+				1. new parents is repalced to orign parents  
+				2. new address replace to orign's orign's slef address  
+				?? replace orign address to my address ??
+			3. both
+				move the next left data to replace orign data
+				and point to the right data
+		*/
 	}
 }
