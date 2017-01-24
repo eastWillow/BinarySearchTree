@@ -23,29 +23,30 @@ uint8_t main(void) {
 	Node* root = NULL;
 
 #ifndef RANDOM
-	uint16_t data[10] = { 12,13,14,15,16,17,18,19,20 };
+	uint16_t data[10] = { 16,12,13,14,15,11,17,18,19,20 };//11,12,13,14,15,16,17,18,19,20
+	size_t size = sizeof(data) / sizeof(data[0]);
 #endif // !RANDOM
 #ifdef RANDOM
-	uint16_t data[10];
+	uint16_t data[20];
 	size_t size = sizeof(data) / sizeof(data[0]);
 	srand(time(NULL));
 	for (int i = 0; i < size; i++) {
-		data[i] = rand() % size + 50;
+		data[i] = rand() % size;
 	}
 #endif // RANDOM
-
 	createTree(&root, data, size);
 	printf("\nOrignial Tree\n");
 	printTree(root);
 
-	printf("\nAfter Add Leaf\n");
+	printf("\nAfter Add these %d %d Leaf\n",30,2000);
 	addLeaf(root, 30);
 	addLeaf(root, 2000);
 	printTree(root);
 
-	printf("\nAfter delete Leaf\n");
-	removeLeaf(root, 30);
-	removeLeaf(root, 2000);
+	printf("\nAfter these %d %d %d delete Leaf\n",15,11,18);
+	removeLeaf(root, 15);
+	removeLeaf(root, 11);
+	removeLeaf(root, 18);
 	printTree(root);
 
 	printf("\nPause! Please press any button");
@@ -118,27 +119,41 @@ Node* addLeaf(_In_ Node* parents, uint16_t newData) {
 
 Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 	if (targetData < parents->data) {
-		removeLeaf((Node*)parents->left, targetData);//Turn Left
+		if((Node*)parents->left != NULL)
+			removeLeaf((Node*)parents->left, targetData);//Turn Left
+		else {
+			printf("\nNot Found%d\n", targetData);
+		}
 	}
 	else if (targetData > parents->data) {
-		removeLeaf((Node*)parents->right, targetData);//Turn Right
+		if ((Node*)parents->right != NULL)
+			removeLeaf((Node*)parents->right, targetData);//Turn Right
+		else {
+			printf("\nNot Found%d\n", targetData);
+		}
 	}
 	else {
 		if (parents->left != NULL && parents->right == NULL) { //Only Left
-			parents->data = ((Node*)parents->left)->data;
-			free(parents->left);//free memory
-			parents->left = NULL;//delete leaf
+			Node* targetLeftLeaf = (Node*)parents->left;
+			parents->data = targetLeftLeaf->data;
+			parents->right = targetLeftLeaf->right;
+			parents->left = targetLeftLeaf->left;
+			free(targetLeftLeaf);//free memory
 		}
 		else if (parents->left == NULL && parents->right != NULL) { //Only Right
-			parents->data = ((Node*)parents->right)->data;
-			free(parents->right);//free memory
-			parents->right = NULL;//delete leaf
+			Node* targetRightLeaf = (Node*)parents->right;
+			parents->data = targetRightLeaf->data;
+			parents->right = targetRightLeaf->right;
+			parents->left = targetRightLeaf->left;
+			free(targetRightLeaf);//free memory
 		}
 		else if (parents->left != NULL && parents->right != NULL) { //Both Side
 			//Copy left First
-			parents->data = ((Node*)parents->left)->data;
-			free(parents->left);//free memory
-			parents->left = NULL;//delete leaf
+			Node* targetLeftLeaf = (Node*)parents->left;
+			parents->data = (targetLeftLeaf)->data;
+			parents->right = (targetLeftLeaf)->right;
+			parents->left = (targetLeftLeaf)->left;
+			free(targetLeftLeaf);//free memory
 		}
 		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
 			if (((Node*)parents->parent)->left == parents) {
