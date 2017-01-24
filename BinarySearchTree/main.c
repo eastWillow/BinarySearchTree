@@ -163,9 +163,9 @@ Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 		}
 		else if (parents->left != NULL && parents->right != NULL) { //Both Side
 			//parents->data = ((Node*)parents->parent)->data;
-			printf("\nYou cannot remove%d\n", targetData);
-			printf("\nUnder %d Have two side leaf Right:%d Left:%d",
-				targetData, ((Node*)parents->right)->data, ((Node*)parents->left)->data);
+			printf("\nYou cannot remove%d", targetData);
+			printf("\nUnder %d Have two side leaf Left:%d Right:%d\n",
+				targetData, ((Node*)parents->left)->data, ((Node*)parents->right)->data);
 		}
 		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
 			if (((Node*)parents->parent)->left == parents) {
