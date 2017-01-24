@@ -162,11 +162,7 @@ Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 			free(targetRightLeaf);//free memory
 		}
 		else if (parents->left != NULL && parents->right != NULL) { //Both Side
-			//Copy left First
-			Node* targetLeftLeaf = ((Node*)parents->left);
-			parents->data = (targetLeftLeaf)->data;
-			parents->left = NULL;
-			free(targetLeftLeaf);//free memory
+			parents->data = ((Node*)parents->parent)->data;
 		}
 		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
 			if (((Node*)parents->parent)->left == parents) {
