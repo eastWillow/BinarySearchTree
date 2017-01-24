@@ -35,8 +35,17 @@ uint8_t main(void) {
 #endif // RANDOM
 
 	createTree(&root, data, size);
+	printf("\nOrignial Tree\n");
+	printTree(root);
+
+	printf("\nAfter Add Leaf\n");
 	addLeaf(root, 30);
 	addLeaf(root, 2000);
+	printTree(root);
+
+	printf("\nAfter delete Leaf\n");
+	removeLeaf(root, 30);
+	removeLeaf(root, 2000);
 	printTree(root);
 
 	printf("\nPause! Please press any button");
@@ -104,32 +113,41 @@ Node* addLeaf(_In_ Node* parents, uint16_t newData) {
 		parents->same += 1;
 		return parents;
 	}
+	return NULL;
 }
 
 Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 	if (targetData < parents->data) {
-		//turn left
-		removeLeaf((Node*)parents->left, targetData);
+		removeLeaf((Node*)parents->left, targetData);//Turn Left
 	}
 	else if (targetData > parents->data) {
-		//turn right
-		removeLeaf((Node*)parents->right, targetData);
+		removeLeaf((Node*)parents->right, targetData);//Turn Right
 	}
 	else {
-		//remove
-		/*judgment is there any data under this leaf?
-		1. nodata, just delete
-		2. havedata
-			1. only left?
-				move the next left data to replace orign data
-			2. only right?
-				move the next right data to replace orign data:
-				1. new parents is repalced to orign parents  
-				2. new address replace to orign's orign's slef address  
-				?? replace orign address to my address ??
-			3. both
-				move the next left data to replace orign data
-				and point to the right data
-		*/
+		if (parents->left != NULL && parents->right == NULL) { //Only Left
+			parents->data = ((Node*)parents->left)->data;
+			free(parents->left);//free memory
+			parents->left = NULL;//delete leaf
+		}
+		else if (parents->left == NULL && parents->right != NULL) { //Only Right
+			parents->data = ((Node*)parents->right)->data;
+			free(parents->right);//free memory
+			parents->right = NULL;//delete leaf
+		}
+		else if (parents->left != NULL && parents->right != NULL) { //Both Side
+			//Copy left First
+			parents->data = ((Node*)parents->left)->data;
+			free(parents->left);//free memory
+			parents->left = NULL;//delete leaf
+		}
+		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
+			if (((Node*)parents->parent)->left == parents) {
+				((Node*)parents->parent)->left = NULL;
+			}
+			else if(((Node*)parents->parent)->right == parents){
+				((Node*)parents->parent)->right = NULL;
+			}
+			free(parents);
+		}
 	}
 }
