@@ -4,6 +4,7 @@
 #include <time.h>
 
 #define RANDOM 
+#define TREE_SIZE 50
 
 typedef struct _Node
 {
@@ -18,22 +19,31 @@ void createTree(_Out_ Node* *parents, _In_ uint16_t* data, size_t dataSize);
 Node* addLeaf(_In_ Node* parents, uint16_t newData);
 Node* removeLeaf(_In_ Node* parents, uint16_t targetData);
 void printTree(_In_ Node* root);
+Node* root = NULL;
 
 uint8_t main(void) {
-	Node* root = NULL;
+	
 
 #ifndef RANDOM
-	uint16_t data[10] = { 16,12,13,14,15,11,17,18,19,20 };//11,12,13,14,15,16,17,18,19,20
+	uint16_t data[20] = { 0,1,2,3,7,7,8,4,11,12, 4, 14, 15, 17,19 };
 	size_t size = sizeof(data) / sizeof(data[0]);
+	uint16_t rand1 = 4;
+	uint16_t rand2 = 14;
+	uint16_t rand3 = 4;
 #endif // !RANDOM
 #ifdef RANDOM
-	uint16_t data[20];
+	uint16_t data[TREE_SIZE];
 	size_t size = sizeof(data) / sizeof(data[0]);
 	srand(time(NULL));
 	for (int i = 0; i < size; i++) {
 		data[i] = rand() % size;
 	}
+	uint16_t rand1 = rand() % size;
+	uint16_t rand2 = rand() % size;
+	uint16_t rand3 = rand() % size;
 #endif // RANDOM
+	
+
 	createTree(&root, data, size);
 	printf("\nOrignial Tree\n");
 	printTree(root);
@@ -43,10 +53,10 @@ uint8_t main(void) {
 	addLeaf(root, 2000);
 	printTree(root);
 
-	printf("\nAfter these %d %d %d delete Leaf\n",15,11,18);
-	removeLeaf(root, 15);
-	removeLeaf(root, 11);
-	removeLeaf(root, 18);
+	printf("\nAfter delete these %d %d %d Leaf\n", rand1, rand2, rand3);
+	removeLeaf(root, rand1);
+	removeLeaf(root, rand2);
+	removeLeaf(root, rand3);
 	printTree(root);
 
 	printf("\nPause! Please press any button");
@@ -69,15 +79,19 @@ void createTree(_Out_ Node* *parents, _In_ uint16_t* data, size_t dataSize) {
 void printTree(_In_ Node* parents) {
 	if (parents->left != NULL) {
 		printTree(parents->left);
-		printf("%d:%d ", parents->data, parents->same + 1);
+		//printf("%d:%d ", parents->data, parents->same + 1
+		printf("%d ", parents->data);
 	}
 	if (parents->right != NULL) {
-		if (parents->left == NULL)
-			printf("%d:%d ", parents->data, parents->same + 1);
+		if (parents->left == NULL) {
+			//printf("%d:%d ", parents->data, parents->same + 1);
+			printf("%d ", parents->data);
+		}
 		printTree(parents->right);
 	}
 	if (parents->left == NULL && parents->right == NULL) {
-		printf("%d:%d ", parents->data, parents->same + 1);
+		//printf("%d:%d ", parents->data, parents->same + 1);
+		printf("%d ", parents->data);
 	}
 }
 
@@ -134,14 +148,14 @@ Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 	}
 	else {
 		if (parents->left != NULL && parents->right == NULL) { //Only Left
-			Node* targetLeftLeaf = (Node*)parents->left;
+			Node* targetLeftLeaf = ((Node*)parents->left);
 			parents->data = targetLeftLeaf->data;
 			parents->right = targetLeftLeaf->right;
 			parents->left = targetLeftLeaf->left;
 			free(targetLeftLeaf);//free memory
 		}
 		else if (parents->left == NULL && parents->right != NULL) { //Only Right
-			Node* targetRightLeaf = (Node*)parents->right;
+			Node* targetRightLeaf = ((Node*)parents->right);
 			parents->data = targetRightLeaf->data;
 			parents->right = targetRightLeaf->right;
 			parents->left = targetRightLeaf->left;
@@ -149,10 +163,9 @@ Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 		}
 		else if (parents->left != NULL && parents->right != NULL) { //Both Side
 			//Copy left First
-			Node* targetLeftLeaf = (Node*)parents->left;
+			Node* targetLeftLeaf = ((Node*)parents->left);
 			parents->data = (targetLeftLeaf)->data;
-			parents->right = (targetLeftLeaf)->right;
-			parents->left = (targetLeftLeaf)->left;
+			parents->left = NULL;
 			free(targetLeftLeaf);//free memory
 		}
 		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
