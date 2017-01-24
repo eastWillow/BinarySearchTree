@@ -22,7 +22,7 @@ void printTree(_In_ Node* root);
 Node* root = NULL;
 
 uint8_t main(void) {
-	
+
 
 #ifndef RANDOM
 	uint16_t data[20] = { 0,1,2,3,7,7,8,4,11,12, 4, 14, 15, 17,19 };
@@ -42,13 +42,13 @@ uint8_t main(void) {
 	uint16_t rand2 = rand() % size;
 	uint16_t rand3 = rand() % size;
 #endif // RANDOM
-	
+
 
 	createTree(&root, data, size);
 	printf("\nOrignial Tree\n");
 	printTree(root);
 
-	printf("\nAfter Add these %d %d Leaf\n",30,2000);
+	printf("\nAfter Add these %d %d Leaf\n", 30, 2000);
 	addLeaf(root, 30);
 	addLeaf(root, 2000);
 	printTree(root);
@@ -133,7 +133,7 @@ Node* addLeaf(_In_ Node* parents, uint16_t newData) {
 
 Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 	if (targetData < parents->data) {
-		if((Node*)parents->left != NULL)
+		if ((Node*)parents->left != NULL)
 			removeLeaf((Node*)parents->left, targetData);//Turn Left
 		else {
 			printf("\nNot Found%d\n", targetData);
@@ -162,13 +162,16 @@ Node* removeLeaf(_In_ Node* parents, uint16_t targetData) {
 			free(targetRightLeaf);//free memory
 		}
 		else if (parents->left != NULL && parents->right != NULL) { //Both Side
-			parents->data = ((Node*)parents->parent)->data;
+			//parents->data = ((Node*)parents->parent)->data;
+			printf("\nYou cannot remove%d\n", targetData);
+			printf("\nUnder %d Have two side leaf Right:%d Left:%d",
+				targetData, ((Node*)parents->right)->data, ((Node*)parents->left)->data);
 		}
 		else if (parents->left == NULL && parents->right == NULL) { //No Any Leaf
 			if (((Node*)parents->parent)->left == parents) {
 				((Node*)parents->parent)->left = NULL;
 			}
-			else if(((Node*)parents->parent)->right == parents){
+			else if (((Node*)parents->parent)->right == parents) {
 				((Node*)parents->parent)->right = NULL;
 			}
 			free(parents);
