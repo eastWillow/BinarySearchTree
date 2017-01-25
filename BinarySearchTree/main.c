@@ -4,10 +4,10 @@
 #include <time.h>
 
 #define RANDOM 
-#define TREE_SIZE 5
+#define TREE_SIZE 50
 
 struct Node {
-        struct Node *parent;
+        //struct Node *parent;
         struct Node *left;
         struct Node *right;
         uint16_t data;
@@ -41,7 +41,7 @@ uint8_t main( void )
 #endif // RANDOM
 
         struct Node* root = ( struct Node* )malloc( sizeof( struct Node ) );
-        root->parent = NULL;
+        //root->parent = NULL;
         root->left = NULL;
         root->right = NULL;
         root->data = NULL;
@@ -92,8 +92,7 @@ struct Node* addLeaf( _In_ struct Node *parents, uint16_t newData )
 {
         if ( newData < parents->data ) {
                 if ( parents->left == NULL ) {
-                        parents->left = (struct Node*)malloc( sizeof( struct Node ) );
-                        parents->left->parent = parents;
+                        parents->left = ( struct Node* )malloc( sizeof( struct Node ) );
                         parents->left->data = newData;
                         parents->left->left = NULL;
                         parents->left->right = NULL;
@@ -106,8 +105,7 @@ struct Node* addLeaf( _In_ struct Node *parents, uint16_t newData )
         }
         else if ( newData > parents->data ) {
                 if ( parents->right == NULL ) {
-                        parents->right = (struct Node*)malloc( sizeof( struct Node ) );
-                        parents->right->parent = parents;
+                        parents->right = ( struct Node* )malloc( sizeof( struct Node ) );
                         parents->right->data = newData;
                         parents->right->left = NULL;
                         parents->right->right = NULL;
@@ -128,15 +126,21 @@ struct Node* addLeaf( _In_ struct Node *parents, uint16_t newData )
 struct Node* removeLeaf( _In_ struct Node *parents, uint16_t targetData )
 {
         if ( targetData < parents->data ) {
-                if ( parents->left != NULL )
-                        removeLeaf( parents->left, targetData );//Turn Left
+                if ( parents->left != NULL ) {
+                        if ( removeLeaf( parents->left, targetData ) == parents->left ) {//Turn Left
+                                parents->left = NULL;
+                        }
+                }
                 else {
                         printf( "\nNot Found%d\n", targetData );
                 }
         }
         else if ( targetData > parents->data ) {
-                if ( parents->right != NULL )
-                        removeLeaf( parents->right, targetData );//Turn Right
+                if ( parents->right != NULL ) {
+                        if ( removeLeaf( parents->right, targetData ) == parents->right ) {//Turn Right
+                                parents->right = NULL;
+                        }
+                }
                 else {
                         printf( "\nNot Found%d\n", targetData );
                 }
@@ -157,19 +161,13 @@ struct Node* removeLeaf( _In_ struct Node *parents, uint16_t targetData )
                         free( targetRightLeaf );//free memory
                 }
                 else if ( parents->left != NULL && parents->right != NULL ) { //Both Side
-                        //parents->data = ((Node*)parents->parent)->data;
                         printf( "\nYou cannot remove%d", targetData );
                         printf( "\nUnder %d Have two side leaf Left:%d Right:%d\n",
                                 targetData, ( parents->left )->data, ( parents->right )->data );
                 }
                 else if ( parents->left == NULL && parents->right == NULL ) { //No Any Leaf
-                        if ( ( parents->parent )->left == parents ) {
-                                ( parents->parent )->left = NULL;
-                        }
-                        else if ( ( parents->parent )->right == parents ) {
-                                ( parents->parent )->right = NULL;
-                        }
                         free( parents );
+                        return parents;
                 }
         }
         return NULL;
