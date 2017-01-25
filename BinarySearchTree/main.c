@@ -4,7 +4,7 @@
 #include <time.h>
 
 #define RANDOM 
-#define TREE_SIZE 50
+#define TREE_SIZE 5
 
 struct Node {
         struct Node *parent;
@@ -14,7 +14,7 @@ struct Node {
         uint16_t same;
 };
 
-void createTree( _Out_ struct Node **parents, _In_ uint16_t *data, size_t dataSize );
+//void createTree( _Out_ struct Node **parents, _In_ uint16_t *data, size_t dataSize );
 struct Node* addLeaf( _In_ struct Node *parents, uint16_t newData );
 struct Node* removeLeaf( _In_ struct Node *parents, uint16_t targetData );
 void printTree( _In_ struct Node *root );
@@ -40,9 +40,16 @@ uint8_t main( void )
         uint16_t rand3 = rand( ) % size;
 #endif // RANDOM
 
-        struct Node* root = NULL;
+        struct Node* root = ( struct Node* )malloc( sizeof( struct Node ) );
+        root->parent = NULL;
+        root->left = NULL;
+        root->right = NULL;
+        root->data = NULL;
+        root->same = 0;
+        for ( int i = 0; i < size; i++ ) {
+                addLeaf( root, data[i] );
+        }
 
-        createTree( &root, data, size );
         printf( "\nOrignial Tree\n" );
         printTree( root );
 
@@ -60,20 +67,6 @@ uint8_t main( void )
         printf( "\nPause! Please press any button" );
         getchar( );
         return 0;
-}
-
-void createTree( _Out_ struct Node **parents, _In_ uint16_t *data, size_t dataSize )
-{
-        *parents = ( struct Node* )malloc( sizeof( struct Node ) );
-        (*parents)->parent = NULL;
-        (*parents)->left = NULL;
-        (*parents)->right = NULL;
-        (*parents)->same = 0;
-        (*parents)->data = data[0];
-
-        for ( int i = 1; i < dataSize; i++ ) {
-                addLeaf( *parents , data[i] );
-        }
 }
 void printTree( _In_ struct Node* parents )
 {
