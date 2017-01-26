@@ -7,14 +7,12 @@
 #define TREE_SIZE 50
 
 struct Node {
-        //struct Node *parent;
         struct Node *left;
         struct Node *right;
         uint16_t data;
         uint16_t same;
 };
 
-//void createTree( _Out_ struct Node **parents, _In_ uint16_t *data, size_t dataSize );
 struct Node* addLeaf( _In_ struct Node *parents, uint16_t newData );
 struct Node* removeLeaf( _In_ struct Node *parents, uint16_t targetData );
 void printTree( _In_ struct Node *root );
@@ -41,7 +39,6 @@ uint8_t main( void )
 #endif // RANDOM
 
         struct Node* root = ( struct Node* )malloc( sizeof( struct Node ) );
-        //root->parent = NULL;
         root->left = NULL;
         root->right = NULL;
         root->data = NULL;
@@ -72,18 +69,15 @@ void printTree( _In_ struct Node* parents )
 {
         if ( parents->left != NULL ) {
                 printTree( parents->left );
-                //printf("%d:%d ", parents->data, parents->same + 1
                 printf( "%d ", parents->data );
         }
         if ( parents->right != NULL ) {
                 if ( parents->left == NULL ) {
-                        //printf("%d:%d ", parents->data, parents->same + 1);
                         printf( "%d ", parents->data );
                 }
                 printTree( parents->right );
         }
         if ( parents->left == NULL && parents->right == NULL ) {
-                //printf("%d:%d ", parents->data, parents->same + 1);
                 printf( "%d ", parents->data );
         }
 }
